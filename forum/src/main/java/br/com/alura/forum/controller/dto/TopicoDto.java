@@ -42,4 +42,8 @@ public class TopicoDto {
 		
 		return topicosDto;
 	}
+	
+	public static TopicoDto converter(Topico topico) {
+		return new TopicoDto(topico);
+	}
 }

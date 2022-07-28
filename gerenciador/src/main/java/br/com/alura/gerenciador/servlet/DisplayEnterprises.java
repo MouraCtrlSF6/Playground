@@ -3,6 +3,8 @@ package br.com.alura.gerenciador.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,27 +27,15 @@ public class DisplayEnterprises extends HttpServlet {
     }
     
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     	System.out.println("ListEnterprises.doGet");
+
+    	RequestDispatcher rd = request.getRequestDispatcher("/DisplayEnterprises.jsp");
     	
-    	PrintWriter out = response.getWriter();
+    	request.setAttribute("enterpriseList", Database.getEnterprises());
     	
-    	String names = null;
+    	rd.forward(request, response);
     	
-    	for(Enterprise enterprise : Database.getEnterprises()) {
-    		names += "<li>" + enterprise.getName() + "</li>";
-    	}
-    	
-    	String innerHTML = 
-    	"<html>" +
-    		"<body>" +
-    			"Registered enterprises: " +
-    			"<ul>" + names + "</ul>" + 
-    		"<body>" +
-    	"<html>";
-    	
-    	
-    	out.println(innerHTML);
     }
 
 }

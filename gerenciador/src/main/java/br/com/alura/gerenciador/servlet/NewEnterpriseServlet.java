@@ -3,6 +3,7 @@ package br.com.alura.gerenciador.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,22 +26,18 @@ public class NewEnterpriseServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		System.out.println("NewEnterprisesServlet.doPost");
 		
-		PrintWriter out = response.getWriter();
-		
 		String name = request.getParameter("enterpriseName");
 		
 		Enterprise newEnterprise = new Enterprise(name);
 		
 		Database.register(newEnterprise);
 		
-		String innerHTML = 
-		"<html>" +
-			"<body>" + 
-				"New enterprise " + newEnterprise.getName() + " successfully registered!" + 
-			"</body>" +
-		"</html>";
+		RequestDispatcher rd = request.getRequestDispatcher("/newEnterpriseCreated.jsp");
 		
-		out.println(innerHTML);
+		request.setAttribute("enterpriseName", newEnterprise.getName());
+		
+		rd.forward(request, response);
+		
 	}
 	
 	@Override
