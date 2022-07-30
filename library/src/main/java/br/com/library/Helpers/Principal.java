@@ -1,4 +1,4 @@
-package Helpers;
+package br.com.library.Helpers;
 
 public class Principal {
   public static void main(String[] args) {

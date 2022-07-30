@@ -1,4 +1,4 @@
-package Helpers;
+package br.com.library.Helpers;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -7,10 +7,10 @@ import java.io.InputStreamReader;
 
 public class FileHelper {
   public final static String getExtension(String fileName) {
-    String reversed = ArrayHelper
+    String reversed = StringHelper
       .reverse(fileName);
 
-    return ArrayHelper
+    return StringHelper
       .reverse(reversed.substring(0, reversed.indexOf(".")));
   }
 
