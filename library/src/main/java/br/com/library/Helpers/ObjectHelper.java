@@ -2,17 +2,15 @@ package br.com.library.Helpers;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
 
 @FunctionalInterface 
-interface CallableBack<keyType, valueType, sendValueType> {
+interface ObjectCallable<keyType, valueType, sendValueType> {
   sendValueType run(keyType key, valueType value, Map<keyType, valueType> hashMap);
 }
 
-public class ObjectHelper {
-  public final static <incKey, incValue, sendValue> Map<incKey, sendValue> 
-  map(Map<incKey, incValue> hashMap, CallableBack<incKey, incValue, sendValue> callback)
+public interface ObjectHelper {
+  static <incKey, incValue, sendValue> Map<incKey, sendValue> 
+  map(Map<incKey, incValue> hashMap, ObjectCallable<incKey, incValue, sendValue> callback)
   throws Exception {
     try {
       Map<incKey, sendValue> newHash = new HashMap<>();
@@ -27,8 +25,8 @@ public class ObjectHelper {
     }
   }
 
-  public final static <keyType, valueType> Map<keyType, valueType> 
-  filter(Map<keyType, valueType> hashMap, CallableBack<keyType, valueType, Boolean> callback) {
+  static <keyType, valueType> Map<keyType, valueType> 
+  filter(Map<keyType, valueType> hashMap, ObjectCallable<keyType, valueType, Boolean> callback) {
     Map<keyType, valueType> filteredHash = new HashMap<>();
 
     for(Map.Entry<keyType, valueType> entry : hashMap.entrySet()) {
@@ -40,8 +38,8 @@ public class ObjectHelper {
     return filteredHash;
   }
 
-  public final static <keyType, valueType> Map.Entry<keyType, valueType> 
-  find(Map<keyType, valueType> hashMap, CallableBack<keyType, valueType, Boolean> callback) {
+  static <keyType, valueType> Map.Entry<keyType, valueType> 
+  find(Map<keyType, valueType> hashMap, ObjectCallable<keyType, valueType, Boolean> callback) {
     for(Map.Entry<keyType, valueType> entry : hashMap.entrySet()) {
       if(callback.run(entry.getKey(), entry.getValue(), hashMap)) {
         return entry;

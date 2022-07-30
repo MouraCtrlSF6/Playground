@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 @FunctionalInterface
-interface Imp<U, T> {
+interface ArrayCallable<U, T> {
   U run(T argument);
 }
 
-public class ArrayHelper {
-  public final static <T extends Object> List<T> reverse(T[] list) {
+public interface ArrayHelper {
+  static <T extends Object> List<T> reverse(T[] list) {
     List<T> reversed = new ArrayList<>();
     
     Arrays
@@ -20,7 +20,7 @@ public class ArrayHelper {
     return reversed;
   }
 
-  public final static <T extends Object> List<T> reverse(List<T> list) {
+  static <T extends Object> List<T> reverse(List<T> list) {
     List<T> reversed = new ArrayList<>();
 
     list.forEach(item -> reversed.add(0, item));
@@ -28,7 +28,7 @@ public class ArrayHelper {
     return reversed;
   }
 
-  public final static <T> String join(List<T> list) {
+  static <T> String join(List<T> list) {
     String joinned = "";
 
     for(T item : list) {
@@ -39,7 +39,7 @@ public class ArrayHelper {
     return joinned;
   }
 
-  public final static <T extends Object, U extends Object> List<U> map(List<T> list, Imp<U, T> runner) throws Exception {
+  static <T extends Object, U extends Object> List<U> map(List<T> list, ArrayCallable<U, T> runner) throws Exception {
     try {
       List<U> mappedList = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public class ArrayHelper {
     }
   }
 
-  public final static <T> List<T> filter(List<T> original, Imp<Boolean, T> callback) {
+  static <T> List<T> filter(List<T> original, ArrayCallable<Boolean, T> callback) {
     List<T> filtered = new ArrayList<>();
 
     original.forEach(item -> {
@@ -68,7 +68,7 @@ public class ArrayHelper {
     return filtered;
   }
 
-  public final static <T> T find(List<T> original, Imp<Boolean, T> callback) {
+  static <T> T find(List<T> original, ArrayCallable<Boolean, T> callback) {
     for (T item : original) {
       if(callback.run(item)) {
         return item;

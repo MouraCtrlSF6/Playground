@@ -5,8 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 
-public class FileHelper {
-  public final static String getExtension(String fileName) {
+public interface FileHelper {
+  static String getExtension(String fileName) {
     String reversed = StringHelper
       .reverse(fileName);
 
@@ -14,7 +14,7 @@ public class FileHelper {
       .reverse(reversed.substring(0, reversed.indexOf(".")));
   }
 
-  public final static String getEncoding(String fileName) throws Exception {
+  static String getEncoding(String fileName) throws Exception {
     try {
       FileReader fileReader = new FileReader(fileName);
       String encoding = fileReader.getEncoding();
@@ -26,7 +26,7 @@ public class FileHelper {
     }
   }
 
-  public final static String readAsText(String fileName) throws Exception {
+  static String readAsText(String fileName) throws Exception {
     try {
       FileInputStream file = new FileInputStream(fileName);
       InputStreamReader reader = new InputStreamReader(file);
@@ -47,7 +47,7 @@ public class FileHelper {
     }
   }
 
-  public final static String readFile(String fileName) throws Exception {
+  static String readFile(String fileName) throws Exception {
     try {
       switch(getExtension(fileName)) {
         case "txt":
