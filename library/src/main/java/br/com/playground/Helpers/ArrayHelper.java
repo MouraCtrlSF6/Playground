@@ -1,12 +1,12 @@
-package Helper;
+package Helpers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @FunctionalInterface
-interface Imp {
-  Object run(Object argument);
+interface Imp<U, T> {
+  U run(T argument);
 }
 
 public class ArrayHelper {
@@ -26,13 +26,6 @@ public class ArrayHelper {
     list.forEach(item -> reversed.add(0, item));
 
     return reversed;
-
-  public final static String reverse(String text) {
-    List<String> toList = Arrays.asList(text.split(""));
-    
-    toList = reverse(toList);
-
-    return join(toList);
   }
 
   public final static <T> String join(List<T> list) {
@@ -46,13 +39,13 @@ public class ArrayHelper {
     return joinned;
   }
 
-  public final static <T extends Object, U extends Object> List<U> map(List<T> list, Imp runner) throws Exception {
+  public final static <T extends Object, U extends Object> List<U> map(List<T> list, Imp<U, T> runner) throws Exception {
     try {
       List<U> mappedList = new ArrayList<>();
 
       list.forEach(item -> {
         @SuppressWarnings("unchecked")
-        U callbackReturn = (U) runner.run(item);
+        U callbackReturn = runner.run(item);
         mappedList.add(callbackReturn);
       });
       
@@ -61,5 +54,27 @@ public class ArrayHelper {
     } catch(Exception e) {
       throw e;
     }
+  }
+
+  public final static <T> List<T> filter(List<T> original, Imp<Boolean, T> callback) {
+    List<T> filtered = new ArrayList<>();
+
+    original.forEach(item -> {
+      if(callback.run(item)) {
+        filtered.add(item);
+      }
+    });
+
+    return filtered;
+  }
+
+  public final static <T> T find(List<T> original, Imp<Boolean, T> callback) {
+    for (T item : original) {
+      if(callback.run(item)) {
+        return item;
+      }
+    }
+
+    return null;
   }
 }
