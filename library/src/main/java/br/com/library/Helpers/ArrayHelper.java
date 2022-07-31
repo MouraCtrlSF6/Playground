@@ -4,22 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@FunctionalInterface
-interface ArrayCallable<U, T> {
-  U run(T argument);
-}
+import br.com.library.Helpers.Callables.ArrayCallable;
+import br.com.library.Helpers.Callables.GroupableArrayCallable;
 
 public interface ArrayHelper {
-  static <T extends Object> List<T> reverse(T[] list) {
-    List<T> reversed = new ArrayList<>();
-    
-    Arrays
-      .asList(list)
-      .forEach(item -> reversed.add(0, item));
-
-    return reversed;
-  }
-
   static <T extends Object> List<T> reverse(List<T> list) {
     List<T> reversed = new ArrayList<>();
 
@@ -27,7 +15,11 @@ public interface ArrayHelper {
 
     return reversed;
   }
-
+  
+  static <T extends Object> List<T> reverse(T[] list) {
+	  return reverse(Arrays.asList(list));
+  }
+    
   static <T> String join(List<T> list) {
     String joinned = "";
 
@@ -38,19 +30,21 @@ public interface ArrayHelper {
 
     return joinned;
   }
+  
+  static <T> String join(T[] list) {
+	  return join(Arrays.asList(list));
+  }
 
-  static <T extends Object, U extends Object> List<U> map(List<T> list, ArrayCallable<U, T> runner) throws Exception {
+  static <T, U> List<U> map(List<T> list, ArrayCallable<U, T> callback) throws Exception {
     try {
       List<U> mappedList = new ArrayList<>();
-
-      list.forEach(item -> {
-        @SuppressWarnings("unchecked")
-        U callbackReturn = runner.run(item);
-        mappedList.add(callbackReturn);
-      });
+      
+      for(int index = 0; index < list.size(); index++) {
+    	  mappedList.add(callback.run(list.get(index), index, list));
+      }
       
       return mappedList;
-
+      
     } catch(Exception e) {
       throw e;
     }
@@ -58,23 +52,38 @@ public interface ArrayHelper {
 
   static <T> List<T> filter(List<T> original, ArrayCallable<Boolean, T> callback) {
     List<T> filtered = new ArrayList<>();
-
-    original.forEach(item -> {
-      if(callback.run(item)) {
-        filtered.add(item);
-      }
-    });
+    
+    for(int index = 0; index < original.size(); index++) {
+    	T item = original.get(index);
+    	
+    	if(callback.run(item, index, original)) {
+    		filtered.add(item);
+    	}
+    }
 
     return filtered;
   }
 
   static <T> T find(List<T> original, ArrayCallable<Boolean, T> callback) {
-    for (T item : original) {
-      if(callback.run(item)) {
-        return item;
-      }
+    for (int index = 0; index < original.size(); index++) {
+    	T item = original.get(index);
+    	
+    	if(callback.run(item, index, original)) {
+    		return item;
+    	}
     }
 
     return null;
+  }
+  
+  static <ReturningType, ItemsType> ReturningType 
+  reduce(List<ItemsType> array, GroupableArrayCallable<ReturningType, ItemsType> callback, ReturningType beggingValue) {
+	  ReturningType group = beggingValue;
+	  
+	  for(ItemsType item : array) {
+		  group = callback.run(group, item);
+	  }
+	  
+	  return group;
   }
 }

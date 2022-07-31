@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Test</name>
-	<comment>dfsdfsdfsd</comment>
+	<name>library</name>
+	<comment>A libraty made in order to store utils and helper files inspired by array and object functions from javascript language.</comment>
 	<projects>
 	</projects>
 	<buildSpec>

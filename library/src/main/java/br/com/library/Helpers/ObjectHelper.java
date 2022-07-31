@@ -1,12 +1,10 @@
 package br.com.library.Helpers;
 
 import java.util.Map;
-import java.util.HashMap;
 
-@FunctionalInterface 
-interface ObjectCallable<keyType, valueType, sendValueType> {
-  sendValueType run(keyType key, valueType value, Map<keyType, valueType> hashMap);
-}
+import br.com.library.Helpers.Callables.ObjectCallable;
+
+import java.util.HashMap;
 
 public interface ObjectHelper {
   static <incKey, incValue, sendValue> Map<incKey, sendValue> 
