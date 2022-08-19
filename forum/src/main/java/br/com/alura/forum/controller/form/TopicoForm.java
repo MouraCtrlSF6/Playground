@@ -29,11 +29,6 @@ public class TopicoForm {
 	@NotEmpty
 	private String cursoNome;
 	
-	@NotNull
-	@NotEmpty
-	private Long autorId;
-	
-	
 	public String getTitulo() {
 		return this.titulo;
 	}
@@ -52,12 +47,7 @@ public class TopicoForm {
 	public void setCursoNome(String cursoNome) {
 		this.cursoNome = cursoNome;
 	}
-	public Long getAutorId() {
-		return this.autorId;
-	}
-	public void setAutorId(Long autorId) {
-		this.autorId = autorId;
-	}	
+
 	
 	public Topico toModel(CursoRepository cursoRepository, UsuarioRepository usuarioRepository) 
 	throws MethodArgumentNotValidException {		
@@ -65,17 +55,10 @@ public class TopicoForm {
 			.findByNome(this.getCursoNome())
 			.get(0);
 		
-		if(!ControllerHelper.exists(usuarioRepository, this.getAutorId())) {
-			throw new MethodArgumentNotValidException("Usuário " + this.getAutorId() + " não cadastrado");
-		}
-		
-		Usuario usuario = usuarioRepository.getReferenceById(this.getAutorId());
-		
 		return new Topico(
 			this.getTitulo(),
 			this.getMensagem(),
-			curso,
-			usuario
+			curso
 		);
 				
 	}

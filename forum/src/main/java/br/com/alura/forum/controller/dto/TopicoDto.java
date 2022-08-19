@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import br.com.alura.forum.modelo.Topico;
 
 public class TopicoDto {
@@ -33,14 +35,8 @@ public class TopicoDto {
 		return dataCriacao;
 	}
 	
-	public static List<TopicoDto> converter(List<Topico> topicos) {
-		List<TopicoDto> topicosDto = new ArrayList<>();
-		
-		for(Topico topico : topicos) {
-			topicosDto.add(new TopicoDto(topico));
-		}
-		
-		return topicosDto;
+	public static Page<TopicoDto> converter(Page<Topico> topicos) {
+		return topicos.map(TopicoDto::new);
 	}
 	
 	public static TopicoDto converter(Topico topico) {

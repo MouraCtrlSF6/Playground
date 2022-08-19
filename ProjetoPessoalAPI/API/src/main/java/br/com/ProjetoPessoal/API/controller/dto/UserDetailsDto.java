@@ -1,13 +1,16 @@
 package br.com.ProjetoPessoal.API.controller.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import br.com.ProjetoPessoal.API.models.Role;
 import br.com.ProjetoPessoal.API.models.User;
 
 public class UserDetailsDto {
 	private Long id;
 	private String name;
 	private String cpf;
+	private List<Role> roles;
 	private LocalDateTime registerDate;
 		
 	public UserDetailsDto(User user) {
@@ -15,6 +18,7 @@ public class UserDetailsDto {
 		this.name = user.getName();
 		this.cpf = user.getCpf();
 		this.registerDate = user.getRegisterDate();
+		this.roles = user.getRoles();
 	}
 	
 	public Long getId() {
@@ -28,6 +32,9 @@ public class UserDetailsDto {
 	}
 	public LocalDateTime getRegisterDate() {
 		return this.registerDate;
+	}
+	public List<Role> getRoles() {
+		return this.roles;
 	}
 	
 	public static UserDetailsDto convert(User user) {

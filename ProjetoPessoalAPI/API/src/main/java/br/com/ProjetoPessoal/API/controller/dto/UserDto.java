@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import br.com.ProjetoPessoal.API.models.User;
 
 public class UserDto {
@@ -27,12 +29,8 @@ public class UserDto {
 		return this.registerDate;
 	}
 	
-	public static List<UserDto> convert(List<User> users) {
-		final List<UserDto> dto = new ArrayList<>();
-		
-		users.forEach(user -> dto.add(UserDto.convert(user)));
-		
-		return dto;
+	public static Page<UserDto> convert(Page<User> users) {
+		return users.map(UserDto::new);
 	}
 	
 	public static UserDto convert(User user) {

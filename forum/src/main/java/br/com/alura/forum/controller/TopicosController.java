@@ -1,12 +1,17 @@
 package br.com.alura.forum.controller;
 
 import java.net.URI;
-import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -43,12 +49,14 @@ public class TopicosController {
 	private UsuarioRepository usuarioRepository;
 	
 	@GetMapping
-	public List<TopicoDto> lista(String cursoNome) {
-		System.out.println("Repositorio usado: " + repository);
-		
-		List<Topico> topicos = cursoNome == null
-			? repository.findAll()
-			: repository.findByCurso_Nome(cursoNome);
+	@Cacheable(value = "listaDeTopicos")
+	public Page<TopicoDto> lista(
+		@RequestParam(required = false) String cursoNome, 
+		@PageableDefault(sort = "id", direction = Direction.DESC) Pageable paginacao
+	) {
+		Page<Topico> topicos = cursoNome == null
+			? repository.findAll(paginacao)
+			: repository.findByCurso_Nome(cursoNome, paginacao);
 		
 		return TopicoDto.converter(topicos);
 	}
@@ -65,6 +73,7 @@ public class TopicosController {
 	
 	@PostMapping
 	@Transactional
+	@CacheEvict(value = "listaDeTopicos", allEntries = true)
 	public ResponseEntity<TopicoDto> registra(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
 		try {
 			Topico novoTopico = repository.save(form.toModel(cursoRepository, usuarioRepository));
@@ -86,6 +95,7 @@ public class TopicosController {
 	
 	@PutMapping("/{id}")
 	@Transactional
+	@CacheEvict(value = "listaDeTopicos", allEntries = true)
 	public ResponseEntity<TopicoDto> atualiza(@PathVariable Long id, @RequestBody @Valid AtualizaTopicoForm form) {
 		if(!ControllerHelper.exists(repository, id)) {
 			return ResponseEntity.notFound().build();
@@ -97,8 +107,8 @@ public class TopicosController {
 	
 	@DeleteMapping("/{id}")
 	@Transactional
+	@CacheEvict(value = "listaDeTopicos", allEntries = true)
 	public ResponseEntity<?> remover(@PathVariable Long id) {
-		System.out.println("Entrei no método!");
 		if(!ControllerHelper.exists(repository, id)) {
 			return ResponseEntity.notFound().build();
 		}

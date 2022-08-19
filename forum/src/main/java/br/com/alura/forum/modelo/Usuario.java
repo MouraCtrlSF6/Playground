@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.springframework.data.domain.Page;
+
 @Entity
 public class Usuario {
 	
@@ -19,9 +21,6 @@ public class Usuario {
 	private String email;
 	private String senha;
 	private LocalDateTime registeredAt;
-	
-	@OneToMany(mappedBy = "autor")
-	private List<Topico> topicos;
 	
 	public Usuario() {}
 	
@@ -85,10 +84,6 @@ public class Usuario {
 		return this.registeredAt;
 	}
 	
-	public List<Topico> getTopicos() {
-		return this.topicos;
-	}
-	
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -107,9 +102,5 @@ public class Usuario {
 	
 	public void setRegisteredAt(LocalDateTime registeredAt) {
 		this.registeredAt = registeredAt;
-	}
-	
-	public void setTopicos(List<Topico> topicos) {
-		this.topicos = topicos;
 	}
 }

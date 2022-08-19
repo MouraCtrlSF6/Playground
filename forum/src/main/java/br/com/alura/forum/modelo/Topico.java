@@ -36,13 +36,11 @@ public class Topico {
 	public Topico(
 		String titulo, 
 		String mensagem, 
-		Curso curso,
-		Usuario autor
+		Curso curso
 	) {
 		this.titulo = titulo;
 		this.mensagem = mensagem;
 		this.curso = curso;
-		this.autor = autor;
 	}
 	
 	public Topico() {}
