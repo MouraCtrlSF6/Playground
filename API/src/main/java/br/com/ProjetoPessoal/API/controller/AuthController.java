@@ -32,6 +32,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
 	
 	@Autowired
@@ -44,7 +45,6 @@ public class AuthController {
 	private JwtTokenUtils jwtTokenUtil;
 	
 	@PostMapping
-	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<Object> auth(@RequestBody @Valid AuthForm form) throws JsonMappingException, JsonProcessingException {
 		try {
 			List<User> users = userRepository.findByName(form.getName());

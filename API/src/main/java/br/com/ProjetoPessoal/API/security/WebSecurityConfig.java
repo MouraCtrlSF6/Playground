@@ -33,9 +33,9 @@ public class WebSecurityConfig {
 		http
 			.httpBasic()
 			.and()
-			.csrf().disable()
 			.cors()
-			.and();
+			.and()
+			.csrf().disable();
 		http
 			.addFilter(new JwtTokenFilter(
 				authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),
@@ -71,16 +71,4 @@ public class WebSecurityConfig {
 			.antMatchers(HttpMethod.POST, "/auth")
 			.antMatchers(HttpMethod.POST, "/users");
 	}
-	
-   @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
 }
