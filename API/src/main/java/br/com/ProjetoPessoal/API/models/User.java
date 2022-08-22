@@ -46,7 +46,6 @@ public class User implements Serializable, UserDetails {
 		name = "TB_USERS_ROLES",
 		joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
 		inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id")
-		
 	)
 	private List<Role> roles;
 	
@@ -58,6 +57,9 @@ public class User implements Serializable, UserDetails {
 	
 	@Column(name="updated_at")
 	private LocalDateTime updatedAt;
+	
+	@Column(name="last_access")
+	private LocalDateTime lastAccessAt;
 	
 	@OneToMany(mappedBy = "user")
 	private List<Annotation> annotations;
@@ -76,6 +78,7 @@ public class User implements Serializable, UserDetails {
 		this.setCpf(cpf);
 		this.setRegisterDate(LocalDateTime.now());
 		this.setUpdatedAt(LocalDateTime.now());
+		this.setLastAccessAt(LocalDateTime.now());
 		this.setRoles(roles);
 	}
 	
@@ -102,6 +105,10 @@ public class User implements Serializable, UserDetails {
 	
 	public LocalDateTime getUpdatedAt() {
 		return this.updatedAt;
+	}
+	
+	public LocalDateTime getLastAccessAt() {
+		return this.lastAccessAt;
 	}
 	
 	// Setters
@@ -136,8 +143,13 @@ public class User implements Serializable, UserDetails {
 	public List<Annotation> getAnnotations() {
 		return annotations;
 	}
+	
 	public void setAnnotations(List<Annotation> annotations) {
 		this.annotations = annotations;
+	}
+	
+	public void setLastAccessAt(LocalDateTime lastAccessAt) {
+		this.lastAccessAt = lastAccessAt;
 	}
 	
 	// Overrides

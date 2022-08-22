@@ -1,14 +1,12 @@
 package br.com.ProjetoPessoal.API.controller.form;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-import br.com.ProjetoPessoal.API.enums.RolesEnum;
 import br.com.ProjetoPessoal.API.models.Role;
 import br.com.ProjetoPessoal.API.models.User;
 import br.com.ProjetoPessoal.API.repository.RoleRepository;
@@ -28,9 +26,6 @@ public class UserForm {
 	@NotEmpty
 	@Length(min = 8, max = 12)
 	private String password;
-	
-	@NotNull
-	private List<String> roles;
 	
 	public String getName() {
 		return name;
@@ -56,26 +51,13 @@ public class UserForm {
 		this.password = password;
 	}
 	
-	public List<Role> getRoles(RoleRepository roleRepository) {		
-		List<Role> roles = new ArrayList<>();
-		
-		this.roles.forEach((role) -> 
-			roles.add(roleRepository.findByRole(RolesEnum.valueOf(role)))
-		);
-		
-		return roles;
-	}
-	
-	public void setRoles(List<String> roles) {
-		this.roles = roles;
-	}
 	
 	public static User toModel(UserForm form, RoleRepository roleRepository) {
 		return new User(
 			form.getName(), 
 			form.getPassword(),
 			form.getCpf(),
-			form.getRoles(roleRepository)
+			Arrays.asList(new Role())
 		);
 	}
 }

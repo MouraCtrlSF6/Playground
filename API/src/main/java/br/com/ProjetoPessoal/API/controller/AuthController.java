@@ -1,7 +1,9 @@
 package br.com.ProjetoPessoal.API.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,7 @@ public class AuthController {
 	private JwtTokenUtils jwtTokenUtil;
 	
 	@PostMapping
+	@Transactional
 	public ResponseEntity<Object> auth(@RequestBody @Valid AuthForm form) throws JsonMappingException, JsonProcessingException {
 		try {
 			List<User> users = userRepository.findByName(form.getName());
@@ -74,6 +77,8 @@ public class AuthController {
 			user = (User) auth.getPrincipal();
 			
 			String userToken = jwtTokenUtil.generateToken(user);
+			
+			user.setLastAccessAt(LocalDateTime.now());
 			
 			return ResponseEntity
 				.status(HttpStatus.OK)

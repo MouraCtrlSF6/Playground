@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface HttpUtils {
 	String INTERNAL_SERVER_ERROR_FEEDBACK = "Error: An error has occurred while processing the request";
-	String BAD_REQUEST_FEEDBACK = "Error: Invalid request provied";
+	String BAD_REQUEST_FEEDBACK = "Error: Invalid request provided";
 	
 	static <T> void UnexpectedResponse(
 		HttpServletResponse response,

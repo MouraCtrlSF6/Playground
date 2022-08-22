@@ -12,6 +12,8 @@ public class UserDetailsDto {
 	private String cpf;
 	private List<Role> roles;
 	private LocalDateTime registerDate;
+	private LocalDateTime updateDate;
+	private LocalDateTime lastAccessAt;
 		
 	public UserDetailsDto(User user) {
 		this.id = user.getId();
@@ -19,6 +21,8 @@ public class UserDetailsDto {
 		this.cpf = user.getCpf();
 		this.registerDate = user.getRegisterDate();
 		this.roles = user.getRoles();
+		this.updateDate = user.getUpdatedAt();
+		this.lastAccessAt = user.getLastAccessAt();
 	}
 	
 	public Long getId() {
@@ -35,6 +39,12 @@ public class UserDetailsDto {
 	}
 	public List<Role> getRoles() {
 		return this.roles;
+	}
+	public LocalDateTime getUpdateDate() {
+		return this.updateDate;
+	}
+	public LocalDateTime getLastAccessAt() {
+		return this.lastAccessAt;
 	}
 	
 	public static UserDetailsDto convert(User user) {

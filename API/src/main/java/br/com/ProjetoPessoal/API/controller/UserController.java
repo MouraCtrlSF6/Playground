@@ -1,5 +1,7 @@
 package br.com.ProjetoPessoal.API.controller;
 
+import java.util.Arrays;
+
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
@@ -11,7 +13,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +33,6 @@ import br.com.ProjetoPessoal.API.repository.UserRepository;
 import br.com.ProjetoPessoal.API.util.ArrayUtils;
 import br.com.ProjetoPessoal.API.util.ControllerUtils;
 import br.com.ProjetoPessoal.API.util.JwtTokenUtils;
-import br.com.ProjetoPessoal.API.util.MethodUtils;
 
 @RestController
 @RequestMapping("/users")
@@ -49,7 +49,6 @@ public class UserController {
 	private JwtTokenUtils jwtTokenUtils;
 	
 	@GetMapping
-	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<Page<UserDto>> list(
 		@RequestParam(required = false) String name,
 		@PageableDefault(
@@ -67,10 +66,8 @@ public class UserController {
 				.status(HttpStatus.OK)
 				.body(UserDto.convert(users));
 	}
-	
-	@PreAuthorize("hasRole('ADMIN')")
+
 	@GetMapping("/{id}")
-	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<Object> find(@PathVariable Long id, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
 		if(!ControllerUtils.exists(userRepository, id)) {
 			return ResponseEntity
@@ -103,11 +100,12 @@ public class UserController {
 	
 	@PostMapping
 	@Transactional
-	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<Object> register(@RequestBody @Valid UserForm form) {
 		try {
 			
 			User user = UserForm.toModel(form, roleRepository);
+			
+			user.setRoles(Arrays.asList(roleRepository.findByRole(RolesEnum.valueOf("ROLE_COMMON"))));
 			
 			User newUser = userRepository.save(user);
 			

@@ -6,17 +6,20 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import br.com.ProjetoPessoal.API.models.Role;
 import br.com.ProjetoPessoal.API.models.User;
 
 public class UserDto {
 	private Long id;
 	private String name;
 	private LocalDateTime registerDate;
+	private List<Role> roles;
 		
 	public UserDto(User user) {
 		this.id = user.getId();
 		this.name = user.getName();
 		this.registerDate = user.getRegisterDate();
+		this.roles = user.getRoles();
 	}
 	
 	public Long getId() {
@@ -27,6 +30,9 @@ public class UserDto {
 	}
 	public LocalDateTime getRegisterDate() {
 		return this.registerDate;
+	}
+	public List<Role> getRoles() {
+		return this.roles;
 	}
 	
 	public static Page<UserDto> convert(Page<User> users) {
