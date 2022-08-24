@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.ProjetoPessoal.API.controller.form.AnnotationForm;
 import br.com.ProjetoPessoal.API.models.Annotation;
 import br.com.ProjetoPessoal.API.models.User;
 import br.com.ProjetoPessoal.API.repository.AnnotationRepository;
 import br.com.ProjetoPessoal.API.repository.UserRepository;
 import br.com.ProjetoPessoal.API.util.ControllerUtils;
+import br.com.ProjetoPessoal.API.validators.Annotation.*;
 
 @RestController
 @RequestMapping("/annotations")
@@ -30,7 +30,7 @@ public class AnnotationController {
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<Object> register(@RequestBody @Valid AnnotationForm form) {
+	public ResponseEntity<Object> register(@RequestBody @Valid AnnotationRegisterValidator form) {
 		try {
 			if(!ControllerUtils.exists(userRepository, form.getUser_id())) {
 				return ResponseEntity
@@ -39,7 +39,7 @@ public class AnnotationController {
 			}
 			
 			final User user = userRepository.getReferenceById(form.getUser_id());
-			Annotation annotation = AnnotationForm.toModel(form);
+			Annotation annotation = AnnotationRegisterValidator.toModel(form);
 			
 			annotation.setUser(user);
 			annotation = annotationRepository.save(annotation);

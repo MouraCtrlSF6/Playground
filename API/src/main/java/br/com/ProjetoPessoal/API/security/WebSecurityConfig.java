@@ -45,7 +45,7 @@ public class WebSecurityConfig {
 		http
 			.authorizeHttpRequests()
 			.antMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
-			.anyRequest().permitAll()
+			.anyRequest().authenticated()
 			.and();
 
 		return http.build();

@@ -3,10 +3,18 @@ package br.com.ProjetoPessoal.API.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import br.com.ProjetoPessoal.API.models.Role;
+import br.com.ProjetoPessoal.API.models.User;
+import br.com.ProjetoPessoal.API.repository.UserRepository;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -17,6 +25,17 @@ public class JwtTokenUtils {
     private static String secret = "@Senha123";
 
     private static Long expiration = 3600L;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    public List<Role> getUserRolesFromToken(String token) {    	
+		final String userNameFromToken = this.getUsernameFromToken(token);
+		
+		final User client = userRepository.findByName(userNameFromToken).get(0);
+		
+		return client.getRoles();
+    }
 
     public String getUsernameFromToken(String token) {
         String username;

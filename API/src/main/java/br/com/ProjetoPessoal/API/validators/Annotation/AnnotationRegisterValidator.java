@@ -1,10 +1,10 @@
-package br.com.ProjetoPessoal.API.controller.form;
+package br.com.ProjetoPessoal.API.validators.Annotation;
 
 import javax.validation.constraints.NotNull;
 
 import br.com.ProjetoPessoal.API.models.Annotation;
 
-public class AnnotationForm {
+public class AnnotationRegisterValidator {
 	
 	@NotNull
 	private Long user_id;
@@ -24,7 +24,7 @@ public class AnnotationForm {
 		this.content = content;
 	}
 	
-	public static Annotation toModel(AnnotationForm form) {
+	public static Annotation toModel(AnnotationRegisterValidator form) {
 		return new Annotation(form.getUser_id(), form.getContent());
 	}
 }	

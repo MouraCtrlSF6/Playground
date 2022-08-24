@@ -1,5 +1,6 @@
 package br.com.ProjetoPessoal.API.controller;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,10 +21,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import br.com.ProjetoPessoal.API.controller.dto.AuthDto;
+import br.com.ProjetoPessoal.API.controller.dto.DefaultJsonDto;
 import br.com.ProjetoPessoal.API.controller.dto.UserDetailsDto;
-import br.com.ProjetoPessoal.API.controller.form.AuthForm;
+import br.com.ProjetoPessoal.API.validators.Auth.*;
 import br.com.ProjetoPessoal.API.models.User;
 import br.com.ProjetoPessoal.API.repository.UserRepository;
+import br.com.ProjetoPessoal.API.util.JsonUtils;
 import br.com.ProjetoPessoal.API.util.JwtTokenUtils;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -48,14 +51,17 @@ public class AuthController {
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<Object> auth(@RequestBody @Valid AuthForm form) throws JsonMappingException, JsonProcessingException {
+	public ResponseEntity<Object> auth(@RequestBody @Valid AuthValidator form) throws IOException {
 		try {
 			List<User> users = userRepository.findByName(form.getName());
 			
 			if(users.size() == 0) {
+				String payload = DefaultJsonDto
+					.generateJsonString("Error", "User not found.", HttpStatus.NOT_FOUND);
+				
 				return ResponseEntity
 					.status(HttpStatus.NOT_FOUND)
-					.body("Error: User not found");
+					.body(JsonUtils.parse(payload));
 			}
 		
 			User user = users.get(0);
@@ -64,9 +70,12 @@ public class AuthController {
 				.matches(form.getPassword(), user.getPassword());
 			
 			if(!samePassword) {
+				String payload = DefaultJsonDto
+					.generateJsonString("Error", "Incorrect password provided.", HttpStatus.BAD_REQUEST);
+				
 				return ResponseEntity
 					.status(HttpStatus.BAD_REQUEST)
-					.body("Error: Provided password doesnt match");
+					.body(JsonUtils.parse(payload));
 			}
 			
 			Authentication auth = authenticationManager
@@ -85,9 +94,12 @@ public class AuthController {
 				.header(HttpHeaders.AUTHORIZATION, userToken)
 				.body(new AuthDto(UserDetailsDto.convert(user), userToken));
 		} catch(BadCredentialsException e) {
+			String payload = DefaultJsonDto
+				.generateJsonString("Error", e.getMessage(), HttpStatus.UNAUTHORIZED);
+			
 			return ResponseEntity
 				.status(HttpStatus.UNAUTHORIZED)
-				.body("Error: " + e.getMessage());
+				.body(JsonUtils.parse(payload));
 		}
 	}
 }

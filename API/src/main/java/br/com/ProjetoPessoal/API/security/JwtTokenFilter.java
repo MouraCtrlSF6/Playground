@@ -48,7 +48,8 @@ public class JwtTokenFilter extends BasicAuthenticationFilter {
 			if(authHeader == null || authHeader.length() == 0 || !authHeader.startsWith("Bearer ")) {
 				HttpUtils.UnexpectedResponse(
 					response, 
-					HttpServletResponse.SC_BAD_REQUEST, 
+					HttpServletResponse.SC_BAD_REQUEST,
+					HttpUtils.ERROR_TITLE,
 					HttpUtils.BAD_REQUEST_FEEDBACK
 				);
 				return;
@@ -62,6 +63,7 @@ public class JwtTokenFilter extends BasicAuthenticationFilter {
 				HttpUtils.UnexpectedResponse(
 					response, 
 					HttpServletResponse.SC_BAD_REQUEST, 
+					HttpUtils.ERROR_TITLE,
 					HttpUtils.BAD_REQUEST_FEEDBACK
 				);
 				return;
@@ -76,6 +78,7 @@ public class JwtTokenFilter extends BasicAuthenticationFilter {
 				HttpUtils.UnexpectedResponse(
 					response, 
 					HttpServletResponse.SC_BAD_REQUEST, 
+					HttpUtils.ERROR_TITLE,
 					HttpUtils.BAD_REQUEST_FEEDBACK
 				);
 				return;
@@ -97,7 +100,8 @@ public class JwtTokenFilter extends BasicAuthenticationFilter {
 			try {
 				HttpUtils.UnexpectedResponse(
 					response, 
-					HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					HttpUtils.ERROR_TITLE,
 					HttpUtils.INTERNAL_SERVER_ERROR_FEEDBACK
 				);
 			} catch (Exception e1) {

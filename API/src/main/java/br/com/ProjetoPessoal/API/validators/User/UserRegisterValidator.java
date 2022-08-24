@@ -1,4 +1,4 @@
-package br.com.ProjetoPessoal.API.controller.form;
+package br.com.ProjetoPessoal.API.validators.User;
 
 import java.util.Arrays;
 
@@ -11,7 +11,7 @@ import br.com.ProjetoPessoal.API.models.Role;
 import br.com.ProjetoPessoal.API.models.User;
 import br.com.ProjetoPessoal.API.repository.RoleRepository;
 
-public class UserForm {
+public class UserRegisterValidator {
 	
 	@NotNull
 	@NotEmpty
@@ -52,7 +52,7 @@ public class UserForm {
 	}
 	
 	
-	public static User toModel(UserForm form, RoleRepository roleRepository) {
+	public static User toModel(UserRegisterValidator form, RoleRepository roleRepository) {
 		return new User(
 			form.getName(), 
 			form.getPassword(),

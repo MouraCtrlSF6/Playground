@@ -1,7 +1,16 @@
-package br.com.ProjetoPessoal.API.controller.form;
+package br.com.ProjetoPessoal.API.validators.Auth;
 
-public class AuthForm {
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+
+public class AuthValidator {
+
+	@NotNull
 	private String name;
+	
+	@NotNull
+	@Length(min = 8, max = 12)
 	private String password;
 	
 	public String getName() {
