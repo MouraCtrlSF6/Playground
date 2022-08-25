@@ -19,6 +19,8 @@ import br.com.ProjetoPessoal.API.repository.UserRepository;
 import br.com.ProjetoPessoal.API.util.HttpUtils;
 import br.com.ProjetoPessoal.API.util.JwtTokenUtils;
 import br.com.ProjetoPessoal.API.util.MethodUtils;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 
 public class JwtTokenFilter extends BasicAuthenticationFilter {
 	
@@ -57,21 +59,11 @@ public class JwtTokenFilter extends BasicAuthenticationFilter {
 			
 			final String jwtToken = authHeader.split(" ")[1].trim();
 			
-			if(!this.jwtTokenUtil.canTokenBeRefreshed(jwtToken)) {
-				filterChain.doFilter(request, response);
-				MethodUtils.displayMessage("Provided token is not valid.");
-				HttpUtils.UnexpectedResponse(
-					response, 
-					HttpServletResponse.SC_BAD_REQUEST, 
-					HttpUtils.ERROR_TITLE,
-					HttpUtils.BAD_REQUEST_FEEDBACK
-				);
-				return;
-			}
+			jwtTokenUtil.validateToken(jwtToken);
 			
 			User userFromToken = userRepository
-				.findByName(this.jwtTokenUtil.getUsernameFromToken(jwtToken))
-				.get(0);
+				.findByName(this.jwtTokenUtil.getUsernameFromToken(jwtToken));
+				
 			if(userFromToken == null) {
 				filterChain.doFilter(request, response);
 				MethodUtils.displayMessage("Couldn't get user from provided token");
@@ -95,6 +87,32 @@ public class JwtTokenFilter extends BasicAuthenticationFilter {
 	        SecurityContextHolder.getContext().setAuthentication(authentication);
 	        
 	        filterChain.doFilter(request, response);
+		} catch (ExpiredJwtException e) {
+			try {
+				HttpUtils.UnexpectedResponse(
+					response, 
+					HttpServletResponse.SC_BAD_REQUEST,
+					HttpUtils.ERROR_TITLE,
+					HttpUtils.EXPIRED_TOKEN_FEEDBACK
+				);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			return;
+
+		} catch (MalformedJwtException e) {
+			try {
+				HttpUtils.UnexpectedResponse(
+					response, 
+					HttpServletResponse.SC_BAD_REQUEST,
+					HttpUtils.ERROR_TITLE,
+					HttpUtils.INVALID_TOKEN_FEEDBACK
+				);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			return;
+
 		} catch(Exception e) {
 			MethodUtils.displayMessage(e.getMessage());
 			try {
@@ -107,8 +125,8 @@ public class JwtTokenFilter extends BasicAuthenticationFilter {
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
-			
 			return;
+
 		}
 	}		
 }

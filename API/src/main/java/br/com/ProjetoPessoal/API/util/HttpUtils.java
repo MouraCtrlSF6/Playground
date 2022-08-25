@@ -9,8 +9,10 @@ import org.springframework.http.HttpStatus;
 import br.com.ProjetoPessoal.API.controller.dto.DefaultJsonDto;
 
 public interface HttpUtils {
-	String INTERNAL_SERVER_ERROR_FEEDBACK = "Error: An error has occurred while processing the request";
-	String BAD_REQUEST_FEEDBACK = "Error: Invalid request provided";
+	String INTERNAL_SERVER_ERROR_FEEDBACK = "An error has occurred while processing the request.";
+	String BAD_REQUEST_FEEDBACK = "Invalid request provided.";
+	String EXPIRED_TOKEN_FEEDBACK = "Provided access token expired.";
+	String INVALID_TOKEN_FEEDBACK = "Invalid token provided.";
 	
 	String ERROR_TITLE = "Error";
 	

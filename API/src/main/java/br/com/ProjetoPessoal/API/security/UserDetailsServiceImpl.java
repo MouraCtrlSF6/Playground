@@ -1,7 +1,5 @@
 package br.com.ProjetoPessoal.API.security;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,12 +18,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) 
 	throws UsernameNotFoundException {
-		List<User> user = userRepository.findByName(username);
+		User user = userRepository.findByName(username);
 		
-		if(user.size() == 0) {
+		if(user == null) {
 			throw new UsernameNotFoundException("User with name " + username + " was not found!");
 		}
 		
-		return user.get(0);
+		return user;
 	}
 }

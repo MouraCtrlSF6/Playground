@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 import br.com.ProjetoPessoal.API.models.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {	
+	User findByName(String name);
+
 	Page<User> findByName(String name, Pageable pagination);
-	
-	List<User> findByName(String name);
 }	

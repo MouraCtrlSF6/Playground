@@ -1,7 +1,9 @@
 package br.com.ProjetoPessoal.API.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,6 @@ import br.com.ProjetoPessoal.API.models.Role;
 import br.com.ProjetoPessoal.API.models.User;
 import br.com.ProjetoPessoal.API.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class JwtTokenUtils {
     public List<Role> getUserRolesFromToken(String token) {    	
 		final String userNameFromToken = this.getUsernameFromToken(token);
 		
-		final User client = userRepository.findByName(userNameFromToken).get(0);
+		final User client = userRepository.findByName(userNameFromToken);
 		
 		return client.getRoles();
     }
@@ -48,6 +49,22 @@ public class JwtTokenUtils {
         return username;
     }
 
+    public String formatToken(String token) {
+        return token.split(" ")[1].trim();
+    }
+
+    public User getUserFromToken(String token) {
+        User user;
+        
+        try {
+            String username = getUsernameFromToken(token);
+            user = userRepository.findByName(username);
+        } catch(Exception e) {
+            user = null;
+        }
+        return user;
+    }
+
     public Date getCreatedDateFromToken(String token) {
         Date created;
         
@@ -59,18 +76,25 @@ public class JwtTokenUtils {
         return created;
     }
 
-    public Date getExpirationDateFromToken(String token) {
+    public Date getExpirationDateFromToken(String token)
+    throws ExpiredJwtException, MalformedJwtException, Exception {
         Date expiration;
         
         try {
-            expiration = getClaimsFromToken(token).getExpiration();
+            Claims claims = getClaimsFromToken(token);
+            expiration = claims.getExpiration();
+        } catch (ExpiredJwtException e) {
+            throw e;
+        } catch (MalformedJwtException e) {
+            throw e;
         } catch (Exception e) {
             expiration = null;
-        }
+        } 
         return expiration;
     }
 
-    private Claims getClaimsFromToken(String token) {
+    private Claims getClaimsFromToken(String token)
+    throws ExpiredJwtException, MalformedJwtException {
         Claims claims;
         
         try {
@@ -78,8 +102,12 @@ public class JwtTokenUtils {
                     .setSigningKey(secret)
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (Exception e) {
-        	System.out.println("Gonna throw exception: " + e.getMessage() + "\n");
+        } catch (ExpiredJwtException e) {
+            throw e;
+        } catch (MalformedJwtException e) {
+            throw e;
+        }
+        catch (Exception e) {
             claims = null;
         }
         return claims;
@@ -89,9 +117,18 @@ public class JwtTokenUtils {
         return new Date(System.currentTimeMillis() + expiration * 1000);
     }
 
-    private Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
+    private Boolean isTokenExpired(String token) 
+    throws ExpiredJwtException, MalformedJwtException, Exception {
+        try {
+            final Date expiration = getExpirationDateFromToken(token);
+            return expiration.before(new Date());
+        } catch (ExpiredJwtException e) {
+            throw e;
+        } catch (MalformedJwtException e) {
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        } 
     }
 
     public String generateToken(UserDetails userDetails) {        
@@ -111,12 +148,22 @@ public class JwtTokenUtils {
                 .compact();
     }
 
-    public Boolean canTokenBeRefreshed(String token) {
-        return !isTokenExpired(token);
+    public Boolean canTokenBeRefreshed(String token) 
+    throws ExpiredJwtException, MalformedJwtException, Exception {
+        try {
+            return !isTokenExpired(token);
+        } catch (ExpiredJwtException e) {
+            throw e;
+        } catch (MalformedJwtException e) {
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }   
     }
 
     public String refreshToken(String token) {
         String refreshedToken;
+        
         try {
         	if(!canTokenBeRefreshed(token)) {
         		throw new Exception("Error: token can't be refreshed.");
@@ -131,10 +178,31 @@ public class JwtTokenUtils {
         return refreshedToken;
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    public Boolean validateToken(String token, UserDetails userDetails) 
+    throws ExpiredJwtException, MalformedJwtException, Exception {
+        try {
+            final String username = getUsernameFromToken(token);
+            return username.equals(userDetails.getUsername()) && canTokenBeRefreshed(token);
+        } catch (ExpiredJwtException e) {
+            throw e;
+        } catch (MalformedJwtException e) {
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }   
     }
-    
 
+    public void validateToken(String token) 
+    throws ExpiredJwtException, MalformedJwtException, Exception {
+        try {
+            getClaimsFromToken(token);
+            return;
+        } catch (ExpiredJwtException e) {
+            throw e;
+        } catch (MalformedJwtException e) {
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }   
+    }
 }

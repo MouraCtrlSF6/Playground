@@ -1,6 +1,7 @@
 package br.com.ProjetoPessoal.API.models;
 		
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +19,9 @@ public class Annotation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "user_annotation_id")
+	private Long userAnnotationId;
+
 	@Column(name = "user_id", nullable = false, unique = false)
 	private Long user_id;
 	
@@ -33,7 +37,10 @@ public class Annotation {
 	@ManyToOne
 	private User user;
 
-	public Annotation() {}
+	public Annotation() {
+		this.setRegisteredAt(LocalDateTime.now());
+		this.setUpdatedAt(LocalDateTime.now());
+	}
 	
 	public Annotation(
 		Long user_id,
@@ -86,10 +93,35 @@ public class Annotation {
 	}
 	
 	public User getUser() {
-		return user;
+		return this.user;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
+		this.setUser_id(this.user.getId());
+		this.setUserAnnotationId(this.user.getAnnotations());
+	}
+
+	public Long getUserAnnotationId() {
+		return this.userAnnotationId;
+	}
+
+	public void setUserAnnotationId(List<Annotation> annotations) {	
+		final Long userLastAnnotationId = this.getUser().getLastAnnotationId();
+
+		final Annotation lastAnnotationRegistered = annotations.size() - 1 > 0
+			? annotations.get(annotations.size() - 1)
+			: null;
+			
+		final Long lastAnnotationId = lastAnnotationRegistered == null
+			? 0L
+			: lastAnnotationRegistered.getUserAnnotationId();
+
+		this.userAnnotationId = lastAnnotationId > userLastAnnotationId
+			? lastAnnotationId : userLastAnnotationId;
+
+		this.userAnnotationId++;
+
+		this.getUser().setLastAnnotationId(this.userAnnotationId);
 	}
 }

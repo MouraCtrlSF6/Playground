@@ -1,6 +1,5 @@
 package br.com.ProjetoPessoal.API.models;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +24,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
 @Table(name="TB_USERS")
-public class User implements Serializable, UserDetails {
+public class User implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -63,6 +62,9 @@ public class User implements Serializable, UserDetails {
 	
 	@OneToMany(mappedBy = "user")
 	private List<Annotation> annotations;
+
+	@Column(name = "last_annotation_id")
+	private Long lastAnnotationId = 0L;
 
 	// Constructors
 	public User() {}
@@ -144,8 +146,16 @@ public class User implements Serializable, UserDetails {
 		return annotations;
 	}
 	
+	public Long getLastAnnotationId() {
+		return this.lastAnnotationId;
+	}
+
 	public void setAnnotations(List<Annotation> annotations) {
 		this.annotations = annotations;
+	}
+
+	public void setLastAnnotationId(Long lastAnnotationId) {
+		this.lastAnnotationId = lastAnnotationId;
 	}
 	
 	public void setLastAccessAt(LocalDateTime lastAccessAt) {

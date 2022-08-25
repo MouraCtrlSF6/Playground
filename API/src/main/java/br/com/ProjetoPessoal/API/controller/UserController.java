@@ -2,7 +2,6 @@ package br.com.ProjetoPessoal.API.controller;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -25,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 import br.com.ProjetoPessoal.API.controller.dto.DefaultJsonDto;
 import br.com.ProjetoPessoal.API.controller.dto.UserDetailsDto;

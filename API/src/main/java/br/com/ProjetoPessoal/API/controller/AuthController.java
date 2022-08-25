@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import br.com.ProjetoPessoal.API.controller.dto.AuthDto;
 import br.com.ProjetoPessoal.API.controller.dto.DefaultJsonDto;
 import br.com.ProjetoPessoal.API.controller.dto.UserDetailsDto;
@@ -53,9 +50,9 @@ public class AuthController {
 	@Transactional
 	public ResponseEntity<Object> auth(@RequestBody @Valid AuthValidator form) throws IOException {
 		try {
-			List<User> users = userRepository.findByName(form.getName());
+			User user = userRepository.findByName(form.getName());
 			
-			if(users.size() == 0) {
+			if(user == null) {
 				String payload = DefaultJsonDto
 					.generateJsonString("Error", "User not found.", HttpStatus.NOT_FOUND);
 				
@@ -63,8 +60,6 @@ public class AuthController {
 					.status(HttpStatus.NOT_FOUND)
 					.body(JsonUtils.parse(payload));
 			}
-		
-			User user = users.get(0);
 			
 			Boolean samePassword = new BCryptPasswordEncoder()
 				.matches(form.getPassword(), user.getPassword());
