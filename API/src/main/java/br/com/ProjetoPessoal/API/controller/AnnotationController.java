@@ -2,6 +2,7 @@ package br.com.ProjetoPessoal.API.controller;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -30,9 +31,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ProjetoPessoal.API.controller.dto.AnnotationDto;
 import br.com.ProjetoPessoal.API.controller.dto.DefaultJsonDto;
+import br.com.ProjetoPessoal.API.enums.RolesEnum;
 import br.com.ProjetoPessoal.API.models.Annotation;
+import br.com.ProjetoPessoal.API.models.Role;
 import br.com.ProjetoPessoal.API.models.User;
 import br.com.ProjetoPessoal.API.repository.AnnotationRepository;
+import br.com.ProjetoPessoal.API.repository.RoleRepository;
 import br.com.ProjetoPessoal.API.util.ArrayUtils;
 import br.com.ProjetoPessoal.API.util.JsonUtils;
 import br.com.ProjetoPessoal.API.util.JwtTokenUtils;
@@ -49,14 +53,19 @@ public class AnnotationController {
 	@Autowired
 	private JwtTokenUtils jwtTokenUtils;
 	
+	@Autowired
+	private RoleRepository roleRepository;
+
 	@GetMapping
 	public ResponseEntity<Object> list(
 		@RequestParam(required = false) Long user_id,
 		@RequestParam(required = false) String user_name,
+		@RequestParam(required = false) Boolean all,
+		@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
 		@PageableDefault(
 			page = 0,
 			size = 10,
-			sort = "user_id", 
+			sort = "userAnnotationId", 
 			direction = Direction.ASC
 		) Pageable pagination
 	) throws IOException {
@@ -64,12 +73,59 @@ public class AnnotationController {
 
 			final Page<Annotation> annotations;
 
-			if(user_id != null) {
+			token = jwtTokenUtils.formatToken(token);
+
+			final Boolean isAdmin = this.checkUserRole("ROLE_ADMIN", token);
+
+			final User userFromToken = jwtTokenUtils.getUserFromToken(token);
+
+			if(!Arrays.asList(null, false).contains(all)) {
+				if(!isAdmin) {
+					final String payload = DefaultJsonDto
+					.generateJsonString(
+						"Error", 
+						"You don't have permission to access other user's annotations.", 
+						HttpStatus.UNAUTHORIZED
+					);
+
+					return ResponseEntity
+						.status(HttpStatus.UNAUTHORIZED)
+						.body(JsonUtils.parse(payload));
+				}
+
+				annotations = annotationRepository.findAll(pagination);
+			} else if(user_id != null) {
+				if(!isAdmin && !(userFromToken.getId().equals(user_id))) {
+					final String payload = DefaultJsonDto
+						.generateJsonString(
+							"Error", 
+							"You don't have permission to access other user's annotations.", 
+							HttpStatus.UNAUTHORIZED
+						);
+
+					return ResponseEntity
+						.status(HttpStatus.UNAUTHORIZED)
+						.body(JsonUtils.parse(payload));
+				}
+
 				annotations = annotationRepository.findByUser_id(user_id, pagination);
 			} else if (user_name != null) {
+				if(!isAdmin && !(userFromToken.getName().equals(user_name))) {
+					final String payload = DefaultJsonDto
+						.generateJsonString(
+							"Error", 
+							"You don't have permission to access other user's annotations.", 
+							HttpStatus.UNAUTHORIZED
+						);
+
+					return ResponseEntity
+						.status(HttpStatus.UNAUTHORIZED)
+						.body(JsonUtils.parse(payload));
+				}
+
 				annotations = annotationRepository.findByUser_name(user_name, pagination);
 			} else {
-				annotations = annotationRepository.findAll(pagination);
+				annotations = annotationRepository.findByUser_id(userFromToken.getId(), pagination);
 			}
 
 			final Page<AnnotationDto> payload = AnnotationDto.convert(annotations);
@@ -258,4 +314,9 @@ public class AnnotationController {
 		}
 	}
 
+	private Boolean checkUserRole(String role, String token) {
+		final Role roleValue = roleRepository.findByRole(RolesEnum.valueOf(role));
+		
+		return jwtTokenUtils.getUserRolesFromToken(token).contains(roleValue);
+	}
 }
