@@ -1,11 +1,9 @@
 package br.com.ProjetoPessoal.API.controller.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 
-import br.com.ProjetoPessoal.API.models.Role;
 import br.com.ProjetoPessoal.API.models.User;
 
 public class UserDto {

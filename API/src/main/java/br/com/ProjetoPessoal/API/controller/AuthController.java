@@ -2,7 +2,6 @@ package br.com.ProjetoPessoal.API.controller;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;

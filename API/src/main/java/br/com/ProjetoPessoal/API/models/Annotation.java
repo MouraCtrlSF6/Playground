@@ -24,6 +24,9 @@ public class Annotation {
 
 	@Column(name = "user_id", nullable = false, unique = false)
 	private Long user_id;
+
+	@Column(name = "title", nullable = false, unique = false)
+	private String title;
 	
 	@Column(name = "content", nullable = true, unique = false)
 	private String content;
@@ -44,8 +47,10 @@ public class Annotation {
 	
 	public Annotation(
 		Long user_id,
+		String title,
 		String content
 	) {
+		this.setTitle(title);
 		this.setUser_id(user_id);
 		this.setContent(content);
 		this.setRegisteredAt(LocalDateTime.now());
@@ -123,5 +128,13 @@ public class Annotation {
 		this.userAnnotationId++;
 
 		this.getUser().setLastAnnotationId(this.userAnnotationId);
+	}
+
+	public String getTitle() {
+		return this.title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }
