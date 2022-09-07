@@ -66,6 +66,7 @@ public class WebSecurityConfig {
 		return web -> web
 			.ignoring()
 			.antMatchers(HttpMethod.POST, "/auth")
-			.antMatchers(HttpMethod.POST, "/users");
+			.antMatchers(HttpMethod.POST, "/users")
+			.antMatchers(HttpMethod.GET, "/");
 	}
 }
