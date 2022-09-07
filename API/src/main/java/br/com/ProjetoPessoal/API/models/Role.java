@@ -1,7 +1,5 @@
 package br.com.ProjetoPessoal.API.models;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,7 +15,7 @@ import br.com.ProjetoPessoal.API.enums.RolesEnum;
 
 @Entity
 @Table(name="TB_ROLES")
-public class Role implements GrantedAuthority, Serializable {
+public class Role implements GrantedAuthority {
 	
 	private static final long serialVersionUID = 1L;
 
