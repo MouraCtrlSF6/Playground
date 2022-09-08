@@ -2,6 +2,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
+interface Validatable<R, T> {
+  R validate(T arg);
+}
+
 class Person {
   private Integer id;
   private String name;
@@ -39,29 +43,30 @@ class Person {
 
   @Override
 	public boolean equals(Object obj) {
-		List<Callable<Object>> validations = new ArrayList<>(){{
-			add((arg) -> {
-				return !(arg == null);
-			});
-			add((arg) -> {
-				return !(this.getClass() == arg.getClass());
-			});
-			add((arg) -> {
-				Person curso = (Person) arg;	
-				return !(this.getId() == null && curso.getId() != null);
-			});
-			add((arg) -> {
-				Person curso = (Person) arg;
-				return !(this.getId().equals(curso.getId()));
-			});
-		}};
+		List<Validatable<Boolean, Object>> validations = new ArrayList<>();
+
+    validations.add(arg -> !(arg == null));
+
+    validations.add(arg -> {
+      return !(arg instanceof Person);
+    });
+
+    validations.add((arg) -> {
+      Person curso = (Person) arg;	
+      return !(this.getId() == null && curso.getId() != null);
+    });
+
+    validations.add((arg) -> {
+      Person curso = (Person) arg;
+      return !(this.getId().equals(curso.getId()));
+    });
 
     if(super.equals(obj)){
       return true;
     }
 
-		for(Callable<Object> validation : validations) {
-			if(validation.call(obj)) {
+		for(Validatable<Boolean, Object> validation : validations) {
+			if(validation.validate(obj)) {
 				return false;
 			}
 		}

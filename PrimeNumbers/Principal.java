@@ -16,17 +16,17 @@ interface ArrayHelper {
 }
 
 interface PrimeNumber {
-  static Integer generateNextPrime(List<Integer> currentPrimes) 
+  static Long generateNextPrime(List<Long> currentPrimes) 
   throws Exception {
     try {
-      Integer verify = currentPrimes.get(currentPrimes.size() - 1) + 1;
+      Long verify = currentPrimes.get(currentPrimes.size() - 1);
 
       while(true) {
+        verify += 2;
+        
         Boolean isItPrime = isPrime(verify, currentPrimes);
   
         if(isItPrime) return verify;
-  
-        verify++;
       }
 
     } catch(Exception e) {
@@ -34,16 +34,16 @@ interface PrimeNumber {
     }
   }
 
-  static Boolean isPrime(Integer number) 
+  static Boolean isPrime(Long number) 
   throws Exception {
     try {
-      return isPrime(number, Arrays.asList(2, 3, 5));
+      return isPrime(number, Arrays.asList(2L, 3L, 5L));
     } catch(Exception e) {
       throw e;
     }
   }
 
-  static Boolean isPrime(Integer number, List<Integer> primesKnown)
+  static Boolean isPrime(Long number, List<Long> primesKnown)
   throws Exception {
     try {
       List<Boolean> isItPrime = new ArrayList<Boolean>(){{
@@ -51,9 +51,9 @@ interface PrimeNumber {
       }};
   
       primesKnown.forEach((prime) -> {
-        Integer rest = number % prime;
+        Long rest = number % prime;
         Double division = (double) number / prime;
-        Integer maxCheck = Double.valueOf(Math.sqrt(number)).intValue();
+        Long maxCheck = Double.valueOf(Math.sqrt(number)).longValue();
 
         if(isItPrime.get(0) != null) {
           return;
@@ -81,7 +81,7 @@ interface PrimeNumber {
   
         if(isItPrime.get(0) == null && prime == primesKnown.get(primesKnown.size() - 1)) {
           try {
-            List<Integer> updatedPrimeList = ArrayHelper.copy(primesKnown);
+            List<Long> updatedPrimeList = ArrayHelper.copy(primesKnown);
 
             updatedPrimeList.add(generateNextPrime(primesKnown));
 
@@ -104,7 +104,7 @@ interface PrimeNumber {
 public class Principal {
   public static void main(String[] args) {
     try {
-      Integer suspect = Integer.valueOf(readLine());
+      Long suspect = Long.valueOf(readLine());
       System.out.println(suspect + " is a prime number: " + PrimeNumber.isPrime(suspect));
     } catch (Exception e) {
       System.out.println(e.getMessage());
