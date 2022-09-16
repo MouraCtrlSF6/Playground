@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class Console {
-  public static void WriteLine(String message) {
+  public static <T> void WriteLine(T message) {
     System.out.println(message);
   }
 
@@ -17,7 +17,7 @@ public class Console {
     System.out.println("");
   }
 
-  public static void Write(String message) {
+  public static <T> void Write(T message) {
     System.out.print(message);
   }
 
